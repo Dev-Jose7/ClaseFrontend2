@@ -1,30 +1,54 @@
+// Importa hooks y contextos necesarios
 import { useContext, useState } from "react";
 import { setCommentDB } from "./Post";
 
-let CommentForm = ({replyId = null}) => {
-    let setDataComment = useContext(setCommentDB);
-    let [newComment, setComment] = useState("");
-    let objectComment = {};
+const CommentForm = ({ replyId = null }) => {
+  // Accede al setter del contexto para actualizar los comentarios globales
+  const setDataComment = useContext(setCommentDB);
 
-    let createComment = () => {
-        setDataComment(comment => [
-            ...comment,
-            {
-                    "id": Math.max(...comment.map(c => c.id)) + 1, 
-                    "message": newComment,
-                    "like": 0,
-                    "replyId": replyId
-            }
-        ])
-    }
+  // Estado local que guarda el contenido del comentario a escribir
+  const [newComment, setComment] = useState("");
 
-    return(
-        <section className="text-end mt-3">
-            <textarea placeholder="Comenta algo..." className="form-control" onChange={(e) => setComment(e.target.value)}></textarea>
-            <br />
-            <button className="btn btn-secondary" onClick={createComment}>Enviar</button>
-        </section>
-    );
-}
+  // Función para crear un nuevo comentario o respuesta
+  const createComment = () => {
+    // Si el campo está vacío o solo tiene espacios, no hacer nada
+    if (!newComment.trim()) return;
+
+    // Agrega un nuevo comentario al listado global
+    setDataComment(comment => [
+      ...comment,
+      {
+        id: Math.max(...comment.map(c => c.id)) + 1, // genera un nuevo ID único
+        message: newComment,                         // texto del comentario
+        like: 0,                                     // inicia sin likes
+        replyId: replyId                             // si es respuesta, guarda el ID del comentario padre
+      }
+    ]);
+
+    // Limpia el campo de texto después de enviar
+    setComment("");
+  };
+
+  return (
+    <section className="bg-white rounded-3 p-3 shadow-sm border">
+      {/* Campo de texto para escribir el comentario */}
+      <textarea
+        value={newComment}
+        placeholder="Escribe un comentario..."
+        className="form-control mb-2 border-0 bg-light rounded-3 shadow-sm"
+        style={{ resize: "none" }}
+        rows={3}
+        onChange={(e) => setComment(e.target.value)}
+      ></textarea>
+
+      {/* Botón de envío alineado a la derecha */}
+      <div className="text-end">
+        <button className="btn btn-primary rounded-pill px-4" onClick={createComment}>
+          Enviar
+        </button>
+      </div>
+    </section>
+  );
+};
 
 export default CommentForm;
