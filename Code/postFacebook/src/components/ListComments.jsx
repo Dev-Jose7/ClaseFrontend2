@@ -34,7 +34,7 @@ const ListComment = () => {
   };
 
   return (
-    <ul className="list-group list-group-flush border-top-0">
+    <ul className="list-group list-group-flush border-top-0 pb-3">
       {/* Filtra los comentarios que no son respuesta */}
       {data
         .filter(comment => !comment.replyId)
